@@ -16,13 +16,13 @@ export class Tweeter {
 	}
 
 	protected async tweet(status: string): Promise<void> {
+		if (__config.access_token === 'access_token') {
+			return;
+		}
 		await this.twit.post('statuses/update', { status });
 	}
 
 	private shouldTweet(text: string): boolean {
-		if (__config.access_token === 'access_token') {
-			return false;
-		}
 		const words = [
 			'covid',
 			'코로나',
