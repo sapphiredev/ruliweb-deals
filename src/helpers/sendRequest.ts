@@ -1,9 +1,12 @@
-import request from 'request-promise';
+import fetch from 'node-fetch';
+import { USER_AGENT } from '../constants';
 
-import {
-	USER_AGENT,
-} from '~/constants';
-
-export async function sendRequest(url: string): Promise<string> {
-	return await request({ url, headers: { 'User-Agent': USER_AGENT } });
-}
+export const sendRequest = async (url: string): Promise<string> => {
+	const response = await fetch(url, {
+		headers: { 'User-Agent': USER_AGENT },
+	});
+	if (response.ok) {
+		return await response.text();
+	}
+	throw new Error(response.statusText);
+};

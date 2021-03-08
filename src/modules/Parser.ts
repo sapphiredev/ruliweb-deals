@@ -1,20 +1,13 @@
 import cheerio from 'cheerio';
-
-import {
-	TABLE_SELECTOR,
-} from '~/constants';
-
-import {
-	Item,
-} from '~/models';
-
+import { TABLE_SELECTOR } from '../constants';
+import { Item } from '../models';
 import {
 	getURL,
 	sendRequest,
-} from '~/helpers';
+} from '../helpers';
 
 export class Parser {
-	public parseItem($: CheerioStatic, e: CheerioElement): Item | null {
+	public parseItem($: cheerio.Root, e: cheerio.Element): Item | null {
 		try {
 			const column = $(e).find('td').toArray();
 
@@ -42,7 +35,7 @@ export class Parser {
 		const $ = cheerio.load(body);
 
 		const items: Item[] = [];
-		$(TABLE_SELECTOR).each((i, e) => {
+		$(TABLE_SELECTOR).each((_, e) => {
 			const item = this.parseItem($, e);
 			if (item === null) { return; }
 			items.push(item);
@@ -51,6 +44,7 @@ export class Parser {
 	}
 
 	public async parse(): Promise<Item[]> {
-		return await this.parsePage(0);
+		const items = await this.parsePage(0);
+		return items.sort((a, b) => a.id - b.id);
 	}
 }

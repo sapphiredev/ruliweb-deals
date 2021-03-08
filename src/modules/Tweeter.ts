@@ -1,22 +1,18 @@
 import Twit from 'twit';
-
-import {
-	Item,
-} from '~/models';
-
-import {
-	composeTweet,
-} from '~/helpers';
+import { composeTweet } from '../helpers';
+import { Item } from '../models';
 
 export class Tweeter {
 	private readonly twit: Twit;
 
-	public constructor(config: Twit.ConfigKeys) {
+	public constructor(
+		private readonly config: Twit.ConfigKeys,
+	) {
 		this.twit = new Twit(config);
 	}
 
 	protected async tweet(status: string): Promise<void> {
-		if (__config.access_token === 'access_token') {
+		if (this.config.consumer_key === 'consumer_key') {
 			return;
 		}
 		await this.twit.post('statuses/update', { status });

@@ -1,6 +1,6 @@
 import {
 	Item,
-} from '~/models';
+} from '../models';
 
 export function composeTweet(item: Item): string {
 	return [

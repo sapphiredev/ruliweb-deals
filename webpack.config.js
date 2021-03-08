@@ -1,53 +1,57 @@
 const path = require('path');
-
-const webpack = require('webpack');
+const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
-const rootPath = path.resolve(__dirname);
-const srcPath = path.resolve(rootPath, 'src');
-const distPath = path.resolve(rootPath, 'dist');
-
-const config = require(process.env.TRAVIS === 'true' ? './config.sample' : './config');
+/*
+This line is only required if you are specifying `TS_NODE_PROJECT` for whatever reason.
+ */
+// delete process.env.TS_NODE_PROJECT;
 
 module.exports = {
-	'entry': path.resolve(srcPath, 'index.ts'),
-	'output': {
-		'path': distPath,
-		'filename': 'main.js',
-	},
-	'module': {
-		'rules': [
-			{
-				'test': /\.ts$/,
-				'use': 'ts-loader',
-			},
-			{
-				'test': /\.txt$/,
-				'loader': 'list-loader',
-			},
-		],
-	},
-	'plugins': [
-		new webpack.DefinePlugin({
-			'__test': process.env.NODE_ENV === 'test',
-			'__config': JSON.stringify(config),
-		}),
-	],
-	'target': 'node',
-	'devtool': false,
-	'externals': [
-		nodeExternals(),
-	],
-	'resolve': {
-		'extensions': [
-			'.ts',
-			'.tsx',
-			'.js',
-			'.json',
-		],
-		'alias': {
-			'~': srcPath,
-		},
-	},
-	'mode': process.env.NODE_ENV === 'dev' ? 'development' : 'production',
+  context: __dirname,
+  mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
+  entry: slsw.lib.entries,
+  devtool: slsw.lib.webpack.isLocal ? 'eval-cheap-module-source-map' : 'source-map',
+  resolve: {
+    extensions: ['.mjs', '.json', '.ts'],
+    symlinks: false,
+    cacheWithContext: false,
+    plugins: [
+      new TsconfigPathsPlugin({
+        configFile: './tsconfig.paths.json',
+      }),
+    ],
+  },
+  output: {
+    libraryTarget: 'commonjs',
+    path: path.join(__dirname, '.webpack'),
+    filename: '[name].js',
+  },
+  optimization: {
+    concatenateModules: false,
+  },
+  target: 'node',
+  externals: [nodeExternals()],
+  module: {
+    rules: [
+      // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
+      {
+        test: /\.(tsx?)$/,
+        loader: 'ts-loader',
+        exclude: [
+          [
+            path.resolve(__dirname, 'node_modules'),
+            path.resolve(__dirname, '.serverless'),
+            path.resolve(__dirname, '.webpack'),
+          ],
+        ],
+        options: {
+          transpileOnly: true,
+          experimentalWatchApi: true,
+        },
+      },
+    ],
+  },
+  plugins: [],
 };
