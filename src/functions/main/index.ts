@@ -16,4 +16,5 @@ export const main: AWS['functions'][0] = {
 			},
 		},
 	],
+	timeout: 30,
 };
