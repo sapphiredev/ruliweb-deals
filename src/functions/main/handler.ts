@@ -58,6 +58,8 @@ const main: APIGatewayProxyHandler = async event => {
 		await database.setIndex(item.id);
 	}
 
+	database.close();
+
 	return {
 		statusCode: 200,
 		body: JSON.stringify([]),

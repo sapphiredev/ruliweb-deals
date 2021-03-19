@@ -83,4 +83,8 @@ export class Database {
 		}
 		return parseInt(result.Item.value.N, 10);
 	}
+
+	public close() {
+		this.client.destroy();
+	}
 }
