@@ -29,6 +29,7 @@ export class Parser {
 	}
 
 	public async parsePage(page: number): Promise<Item[]> {
+		console.log('parser.parsePage', page);
 		const url = getURL({ page });
 		const body = await sendRequest(url);
 
@@ -44,6 +45,7 @@ export class Parser {
 	}
 
 	public async parse(): Promise<Item[]> {
+		console.log('parser.parse');
 		const items = await this.parsePage(0);
 		return items.sort((a, b) => a.id - b.id);
 	}

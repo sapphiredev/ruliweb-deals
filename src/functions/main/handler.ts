@@ -18,6 +18,8 @@ Sentry.init({
 });
 
 const main: APIGatewayProxyHandler = async event => {
+	console.log('main');
+
 	// tslint:disable:no-string-literal
 	if (event['text'] !== 'sapphire') {
 		return {
@@ -44,6 +46,9 @@ const main: APIGatewayProxyHandler = async event => {
 		parser.parse(),
 		database.getIndex(),
 	]);
+
+	console.log('items.length', items.length);
+	console.log('index', index);
 
 	for (const item of items) {
 		if (index >= item.id) {
