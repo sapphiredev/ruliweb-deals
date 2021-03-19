@@ -1,4 +1,5 @@
 import 'source-map-support/register';
+import * as Sentry from '@sentry/node';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { middyfy } from '@libs/lambda';
 import {
@@ -6,6 +7,15 @@ import {
 	Parser,
 	Tweeter,
 } from '../../modules';
+
+Sentry.init({
+	dsn: 'https://8ba3dc388a78484cb0125c4d551745ac@o554892.ingest.sentry.io/5684065',
+
+	// Set tracesSampleRate to 1.0 to capture 100%
+	// of transactions for performance monitoring.
+	// We recommend adjusting this value in production
+	tracesSampleRate: 1.0,
+});
 
 const main: APIGatewayProxyHandler = async event => {
 	// tslint:disable:no-string-literal
